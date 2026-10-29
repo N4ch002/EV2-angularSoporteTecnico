@@ -1,0 +1,1580 @@
+This file is a merged representation of the entire codebase, combined into a single document by Repomix.
+
+<file_summary>
+This section contains a summary of this file.
+
+<purpose>
+This file contains a packed representation of the entire repository's contents.
+It is designed to be easily consumable by AI systems for analysis, code review,
+or other automated processes.
+</purpose>
+
+<file_format>
+The content is organized as follows:
+1. This summary section
+2. Repository information
+3. Directory structure
+4. Repository files (if enabled)
+5. Multiple file entries, each consisting of:
+  - File path as an attribute
+  - Full contents of the file
+</file_format>
+
+<usage_guidelines>
+- This file should be treated as read-only. Any changes should be made to the
+  original repository files, not this packed version.
+- When processing this file, use the file path to distinguish
+  between different files in the repository.
+- Be aware that this file may contain sensitive information. Handle it with
+  the same level of security as you would the original repository.
+</usage_guidelines>
+
+<notes>
+- Some files may have been excluded based on .gitignore rules and Repomix's configuration
+- Binary files are not included in this packed representation. Please refer to the Repository Structure section for a complete list of file paths, including binary files
+- Files matching patterns in .gitignore are excluded
+- Files matching default ignore patterns are excluded
+- Files are sorted by Git change count (files with more changes are at the bottom)
+</notes>
+
+</file_summary>
+
+<directory_structure>
+api-soporte/
+  db.js
+  package.json
+  server.js
+soporte-angular/
+  .vscode/
+    extensions.json
+    launch.json
+    tasks.json
+  public/
+    favicon.ico
+  src/
+    app/
+      components/
+        cabecera/
+          cabecera.css
+          cabecera.html
+          cabecera.ts
+        formulario-ticket/
+          formulario-ticket.css
+          formulario-ticket.html
+          formulario-ticket.ts
+        menu/
+          menu.css
+          menu.html
+          menu.ts
+        tickets/
+          tickets.css
+          tickets.html
+          tickets.ts
+      models/
+        ticket.ts
+      services/
+        tickets.ts
+      app.config.ts
+      app.css
+      app.html
+      app.routes.ts
+      app.ts
+    index.html
+    main.ts
+    styles.css
+  .editorconfig
+  .gitignore
+  .prettierrc
+  angular.json
+  package.json
+  README.md
+  tsconfig.app.json
+  tsconfig.json
+  tsconfig.spec.json
+.gitignore
+schema.sql
+</directory_structure>
+
+<files>
+This section contains the contents of the repository's files.
+
+<file path="api-soporte/db.js">
+require('dotenv').config();
+   const mysql = require('mysql2/promise');
+
+   const db = mysql.createPool({
+     host: 'localhost',
+     user: 'root',
+     password: process.env.DB_PASSWORD,
+     database: 'soporte_db'
+   });
+
+   module.exports = db;
+</file>
+
+<file path="soporte-angular/.vscode/extensions.json">
+{
+  // For more information, visit: https://go.microsoft.com/fwlink/?linkid=827846
+  "recommendations": ["angular.ng-template"]
+}
+</file>
+
+<file path="soporte-angular/.vscode/launch.json">
+{
+  // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "ng serve",
+      "type": "chrome",
+      "request": "launch",
+      "preLaunchTask": "npm: start",
+      "url": "http://localhost:4200/"
+    },
+    {
+      "name": "ng test",
+      "type": "chrome",
+      "request": "launch",
+      "preLaunchTask": "npm: test",
+      "url": "http://localhost:9876/debug.html"
+    }
+  ]
+}
+</file>
+
+<file path="soporte-angular/.vscode/tasks.json">
+{
+  // For more information, visit: https://go.microsoft.com/fwlink/?LinkId=733558
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "type": "npm",
+      "script": "start",
+      "isBackground": true,
+      "problemMatcher": {
+        "owner": "typescript",
+        "pattern": "$tsc",
+        "background": {
+          "activeOnStart": true,
+          "beginsPattern": {
+            "regexp": "Changes detected"
+          },
+          "endsPattern": {
+            "regexp": "bundle generation (complete|failed)"
+          }
+        }
+      }
+    },
+    {
+      "type": "npm",
+      "script": "test",
+      "isBackground": true,
+      "problemMatcher": {
+        "owner": "typescript",
+        "pattern": "$tsc",
+        "background": {
+          "activeOnStart": true,
+          "beginsPattern": {
+            "regexp": "Changes detected"
+          },
+          "endsPattern": {
+            "regexp": "bundle generation (complete|failed)"
+          }
+        }
+      }
+    }
+  ]
+}
+</file>
+
+<file path="soporte-angular/src/app/services/tickets.ts">
+import { Injectable } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import { Observable } from 'rxjs';
+
+import {
+  Ticket,
+  TicketNuevo
+} from '../models/ticket';
+
+@Injectable({
+  providedIn: 'root'
+})
+export class TicketsService {
+
+  private apiUrl =
+    'http://localhost:3000/api/tickets';
+
+  constructor(
+    private http: HttpClient
+  ) {}
+
+  obtenerTickets(): Observable<Ticket[]> {
+    return this.http.get<Ticket[]>(this.apiUrl);
+  }
+
+  obtenerTicket(id: number): Observable<Ticket> {
+    return this.http.get<Ticket>(`${this.apiUrl}/${id}`);
+  }
+
+  crearTicket(ticket: TicketNuevo): Observable<Ticket> {
+    return this.http.post<Ticket>(this.apiUrl, ticket);
+  }
+
+  actualizarTicket(id: number, ticket: TicketNuevo): Observable<{ mensaje: string }> {
+    return this.http.put<{ mensaje: string }>(`${this.apiUrl}/${id}`, ticket);
+  }
+
+  eliminarTicket(id: number): Observable<{ mensaje: string }> {
+    return this.http.delete<{ mensaje: string }>(`${this.apiUrl}/${id}`);
+  }
+}
+</file>
+
+<file path="soporte-angular/src/app/app.config.ts">
+import {
+  ApplicationConfig,
+  provideBrowserGlobalErrorListeners,
+  provideZoneChangeDetection
+} from '@angular/core';
+
+import { provideRouter } from '@angular/router';
+import { provideHttpClient } from '@angular/common/http';
+
+import { routes } from './app.routes';
+
+export const appConfig: ApplicationConfig = {
+  providers: [
+    provideZoneChangeDetection({ eventCoalescing: true }),
+    provideBrowserGlobalErrorListeners(),
+    provideRouter(routes),
+    provideHttpClient()
+  ]
+};
+</file>
+
+<file path="soporte-angular/src/index.html">
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>SoporteAngular</title>
+  <base href="/">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="icon" type="image/x-icon" href="favicon.ico">
+</head>
+<body>
+  <app-root></app-root>
+</body>
+</html>
+</file>
+
+<file path="soporte-angular/src/main.ts">
+import { bootstrapApplication } from '@angular/platform-browser';
+import { appConfig } from './app/app.config';
+import { App } from './app/app';
+
+bootstrapApplication(App, appConfig)
+  .catch((err) => console.error(err));
+</file>
+
+<file path="soporte-angular/.editorconfig">
+# Editor configuration, see https://editorconfig.org
+root = true
+
+[*]
+charset = utf-8
+indent_style = space
+indent_size = 2
+insert_final_newline = true
+trim_trailing_whitespace = true
+
+[*.ts]
+quote_type = single
+ij_typescript_use_double_quotes = false
+
+[*.md]
+max_line_length = off
+trim_trailing_whitespace = false
+</file>
+
+<file path="soporte-angular/.gitignore">
+# See https://docs.github.com/get-started/getting-started-with-git/ignoring-files for more about ignoring files.
+
+# Compiled output
+/dist
+/tmp
+/out-tsc
+/bazel-out
+
+# Node
+/node_modules
+npm-debug.log
+yarn-error.log
+
+# IDEs and editors
+.idea/
+.project
+.classpath
+.c9/
+*.launch
+.settings/
+*.sublime-workspace
+
+# Visual Studio Code
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+!.vscode/mcp.json
+.history/*
+
+# Miscellaneous
+/.angular/cache
+.sass-cache/
+/connect.lock
+/coverage
+/libpeerconnection.log
+testem.log
+/typings
+__screenshots__/
+
+# System files
+.DS_Store
+Thumbs.db
+</file>
+
+<file path="soporte-angular/.prettierrc">
+{
+  "printWidth": 100,
+  "singleQuote": true,
+  "overrides": [
+    {
+      "files": "*.html",
+      "options": {
+        "parser": "angular"
+      }
+    }
+  ]
+}
+</file>
+
+<file path="soporte-angular/angular.json">
+{
+  "$schema": "./node_modules/@angular/cli/lib/config/schema.json",
+  "version": 1,
+  "cli": {
+    "packageManager": "npm",
+    "analytics": false
+  },
+  "newProjectRoot": "projects",
+  "projects": {
+    "soporte-angular": {
+      "projectType": "application",
+      "schematics": {
+        "@schematics/angular:class": {
+          "skipTests": true
+        },
+        "@schematics/angular:component": {
+          "skipTests": true
+        },
+        "@schematics/angular:directive": {
+          "skipTests": true
+        },
+        "@schematics/angular:guard": {
+          "skipTests": true
+        },
+        "@schematics/angular:interceptor": {
+          "skipTests": true
+        },
+        "@schematics/angular:pipe": {
+          "skipTests": true
+        },
+        "@schematics/angular:resolver": {
+          "skipTests": true
+        },
+        "@schematics/angular:service": {
+          "skipTests": true
+        }
+      },
+      "root": "",
+      "sourceRoot": "src",
+      "prefix": "app",
+      "architect": {
+        "build": {
+          "builder": "@angular/build:application",
+          "options": {
+            "browser": "src/main.ts",
+            "polyfills": ["zone.js"],
+            "tsConfig": "tsconfig.app.json",
+            "assets": [
+              {
+                "glob": "**/*",
+                "input": "public"
+              }
+            ],
+            "styles": [
+              "src/styles.css"
+            ]
+          },
+          "configurations": {
+            "production": {
+              "budgets": [
+                {
+                  "type": "initial",
+                  "maximumWarning": "500kB",
+                  "maximumError": "1MB"
+                },
+                {
+                  "type": "anyComponentStyle",
+                  "maximumWarning": "4kB",
+                  "maximumError": "8kB"
+                }
+              ],
+              "outputHashing": "all"
+            },
+            "development": {
+              "optimization": false,
+              "extractLicenses": false,
+              "sourceMap": true
+            }
+          },
+          "defaultConfiguration": "production"
+        },
+        "serve": {
+          "builder": "@angular/build:dev-server",
+          "configurations": {
+            "production": {
+              "buildTarget": "soporte-angular:build:production"
+            },
+            "development": {
+              "buildTarget": "soporte-angular:build:development"
+            }
+          },
+          "defaultConfiguration": "development"
+        }
+      }
+    }
+  }
+}
+</file>
+
+<file path="soporte-angular/package.json">
+{
+  "name": "soporte-angular",
+  "version": "0.0.0",
+  "scripts": {
+    "ng": "ng",
+    "start": "ng serve",
+    "build": "ng build",
+    "watch": "ng build --watch --configuration development",
+    "test": "ng test"
+  },
+  "private": true,
+  "packageManager": "npm@12.0.2",
+  "dependencies": {
+    "@angular/common": "^22.1.0",
+    "@angular/compiler": "^22.1.0",
+    "@angular/core": "^22.1.0",
+    "@angular/forms": "^22.1.0",
+    "@angular/platform-browser": "^22.1.0",
+    "@angular/router": "^22.1.0",
+    "rxjs": "~7.8.0",
+    "tslib": "^2.3.0",
+    "zone.js": "^0.16.3"
+  },
+  "devDependencies": {
+    "@angular/build": "^22.1.8",
+    "@angular/cli": "^22.1.8",
+    "@angular/compiler-cli": "^22.1.0",
+    "prettier": "^3.8.1",
+    "typescript": "~6.0.2"
+  }
+}
+</file>
+
+<file path="soporte-angular/README.md">
+# SoporteAngular
+
+This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 22.1.8.
+
+## Development server
+
+To start a local development server, run:
+
+```bash
+ng serve
+```
+
+Once the server is running, open your browser and navigate to `http://localhost:4200/`. The application will automatically reload whenever you modify any of the source files.
+
+## Code scaffolding
+
+Angular CLI includes powerful code scaffolding tools. To generate a new component, run:
+
+```bash
+ng generate component component-name
+```
+
+For a complete list of available schematics (such as `components`, `directives`, or `pipes`), run:
+
+```bash
+ng generate --help
+```
+
+## Building
+
+To build the project run:
+
+```bash
+ng build
+```
+
+This will compile your project and store the build artifacts in the `dist/` directory. By default, the production build optimizes your application for performance and speed.
+
+## Running unit tests
+
+To execute unit tests with the [Vitest](https://vitest.dev/) test runner, use the following command:
+
+```bash
+ng test
+```
+
+## Running end-to-end tests
+
+For end-to-end (e2e) testing, run:
+
+```bash
+ng e2e
+```
+
+Angular CLI does not come with an end-to-end testing framework by default. You can choose one that suits your needs.
+
+## Additional Resources
+
+For more information on using the Angular CLI, including detailed command references, visit the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.
+</file>
+
+<file path="soporte-angular/tsconfig.app.json">
+/* To learn more about Typescript configuration file: https://www.typescriptlang.org/docs/handbook/tsconfig-json.html. */
+/* To learn more about Angular compiler options: https://angular.dev/reference/configs/angular-compiler-options. */
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "types": []
+  },
+  "include": [
+    "src/**/*.ts"
+  ],
+  "exclude": [
+    "src/**/*.spec.ts"
+  ]
+}
+</file>
+
+<file path="soporte-angular/tsconfig.json">
+/* To learn more about Typescript configuration file: https://www.typescriptlang.org/docs/handbook/tsconfig-json.html. */
+/* To learn more about Angular compiler options: https://angular.dev/reference/configs/angular-compiler-options. */
+{
+  "compileOnSave": false,
+  "compilerOptions": {
+    "noImplicitOverride": true,
+    "noPropertyAccessFromIndexSignature": true,
+    "noImplicitReturns": true,
+    "noFallthroughCasesInSwitch": true,
+    "skipLibCheck": true,
+    "isolatedModules": true,
+    "experimentalDecorators": true,
+    "importHelpers": true,
+    "target": "ES2022",
+    "module": "preserve"
+  },
+  "angularCompilerOptions": {
+    "enableI18nLegacyMessageIdFormat": false,
+    "strictInjectionParameters": true,
+    "strictInputAccessModifiers": true
+  },
+  "files": [],
+  "references": [
+    {
+      "path": "./tsconfig.app.json"
+    }
+  ]
+}
+</file>
+
+<file path="soporte-angular/tsconfig.spec.json">
+/* To learn more about Typescript configuration file: https://www.typescriptlang.org/docs/handbook/tsconfig-json.html. */
+/* To learn more about Angular compiler options: https://angular.dev/reference/configs/angular-compiler-options. */
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "types": [
+      "vitest/globals"
+    ]
+  },
+  "include": [
+    "src/**/*.d.ts",
+    "src/**/*.spec.ts"
+  ]
+}
+</file>
+
+<file path="schema.sql">
+CREATE DATABASE IF NOT EXISTS soporte_db;
+USE soporte_db;
+
+CREATE TABLE IF NOT EXISTS tickets (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  asunto VARCHAR(150) NOT NULL,
+  solicitante VARCHAR(100) NOT NULL,
+  descripcion TEXT NOT NULL,
+  categoria VARCHAR(50) NOT NULL,
+  prioridad ENUM('Baja', 'Media', 'Alta') NOT NULL,
+  estado ENUM('Pendiente', 'En Proceso', 'Resuelto') NOT NULL,
+  fechaRegistro DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+
+INSERT INTO tickets (asunto, solicitante, descripcion, categoria, prioridad, estado) VALUES
+('Impresora no imprime', 'Ana Torres', 'La impresora de recepción muestra error de papel atascado.', 'Hardware', 'Media', 'Pendiente'),
+('Sin acceso a internet', 'Luis Rojas', 'El laboratorio 2 no tiene conexión desde la mañana.', 'Redes', 'Alta', 'En Proceso'),
+('Restablecer contraseña', 'Carla Muñoz', 'La usuaria no puede ingresar a su correo institucional.', 'Cuentas y accesos', 'Baja', 'Resuelto');
+</file>
+
+<file path="api-soporte/package.json">
+{
+  "name": "api-soporte",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "type": "commonjs",
+  "dependencies": {
+    "cors": "^2.8.6",
+    "dotenv": "^18.0.9",
+    "express": "^5.3.0",
+    "mysql2": "^3.24.6"
+  }
+}
+</file>
+
+<file path="api-soporte/server.js">
+const express = require('express');
+const cors = require('cors');
+const db = require('./db');
+
+const app = express();
+const PORT = 3000;
+
+app.use(cors());
+app.use(express.json());
+
+app.get('/', (req, res) => {
+  res.json({
+    mensaje: 'API Soporte Técnico funcionando'
+  });
+});
+
+// GET: obtener todos los tickets
+app.get('/api/tickets', async (req, res) => {
+  try {
+    const [tickets] = await db.query(
+      'SELECT * FROM tickets ORDER BY id DESC'
+    );
+    res.status(200).json(tickets);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ mensaje: 'Error al obtener los tickets' });
+  }
+});
+
+// GET por id: obtener un ticket
+app.get('/api/tickets/:id', async (req, res) => {
+  const id = Number(req.params.id);
+
+  try {
+    const [tickets] = await db.query(
+      'SELECT * FROM tickets WHERE id = ?',
+      [id]
+    );
+
+    if (tickets.length === 0) {
+      return res.status(404).json({ mensaje: 'Ticket no encontrado' });
+    }
+
+    res.status(200).json(tickets[0]);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ mensaje: 'Error al obtener el ticket' });
+  }
+});
+
+// POST: crear un ticket
+app.post('/api/tickets', async (req, res) => {
+  const {
+    asunto,
+    solicitante,
+    descripcion,
+    categoria,
+    prioridad,
+    estado
+  } = req.body;
+
+  if (!asunto || !solicitante || !descripcion || !categoria || !prioridad || !estado) {
+    return res.status(400).json({ mensaje: 'Faltan datos obligatorios' });
+  }
+
+  try {
+    const [resultado] = await db.query(
+      'INSERT INTO tickets (asunto, solicitante, descripcion, categoria, prioridad, estado) VALUES (?, ?, ?, ?, ?, ?)',
+      [asunto, solicitante, descripcion, categoria, prioridad, estado]
+    );
+
+    const nuevoTicket = {
+      id: resultado.insertId,
+      asunto,
+      solicitante,
+      descripcion,
+      categoria,
+      prioridad,
+      estado
+    };
+
+    res.status(201).json(nuevoTicket);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ mensaje: 'Error al registrar el ticket' });
+  }
+});
+
+// PUT: actualizar un ticket
+app.put('/api/tickets/:id', async (req, res) => {
+  const id = Number(req.params.id);
+
+  const {
+    asunto,
+    solicitante,
+    descripcion,
+    categoria,
+    prioridad,
+    estado
+  } = req.body;
+
+  if (!asunto || !solicitante || !descripcion || !categoria || !prioridad || !estado) {
+    return res.status(400).json({ mensaje: 'Faltan datos obligatorios' });
+  }
+
+  try {
+    const [resultado] = await db.query(
+      'UPDATE tickets SET asunto = ?, solicitante = ?, descripcion = ?, categoria = ?, prioridad = ?, estado = ? WHERE id = ?',
+      [asunto, solicitante, descripcion, categoria, prioridad, estado, id]
+    );
+
+    if (resultado.affectedRows === 0) {
+      return res.status(404).json({ mensaje: 'Ticket no encontrado' });
+    }
+
+    res.status(200).json({ mensaje: 'Ticket actualizado correctamente' });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ mensaje: 'Error al actualizar el ticket' });
+  }
+});
+
+// DELETE: eliminar un ticket
+app.delete('/api/tickets/:id', async (req, res) => {
+  const id = Number(req.params.id);
+
+  try {
+    const [resultado] = await db.query(
+      'DELETE FROM tickets WHERE id = ?',
+      [id]
+    );
+
+    if (resultado.affectedRows === 0) {
+      return res.status(404).json({ mensaje: 'Ticket no encontrado' });
+    }
+
+    res.status(200).json({ mensaje: 'Ticket eliminado correctamente' });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ mensaje: 'Error al eliminar el ticket' });
+  }
+});
+
+app.listen(PORT, () => {
+  console.log(`API ejecutándose en http://localhost:${PORT}`);
+});
+</file>
+
+<file path="soporte-angular/src/app/components/cabecera/cabecera.css">
+.cabecera {
+  padding: 28px;
+  text-align: center;
+  background: #0b4f8a;
+  color: white;
+}
+
+.cabecera h1 {
+  margin: 0;
+}
+
+.cabecera p {
+  margin-bottom: 0;
+}
+</file>
+
+<file path="soporte-angular/src/app/components/cabecera/cabecera.html">
+<header class="cabecera">
+  <h1>{{ titulo }}</h1>
+  <p>{{ subtitulo }}</p>
+</header>
+</file>
+
+<file path="soporte-angular/src/app/components/cabecera/cabecera.ts">
+import { Component } from '@angular/core';
+
+@Component({
+  selector: 'app-cabecera',
+  imports: [],
+  templateUrl: './cabecera.html',
+  styleUrl: './cabecera.css'
+})
+export class Cabecera {
+  titulo = 'Soporte Técnico';
+  subtitulo = 'Registro y seguimiento de tickets de soporte';
+}
+</file>
+
+<file path="soporte-angular/src/app/components/formulario-ticket/formulario-ticket.css">
+.formulario {
+  max-width: 650px;
+  margin: 0 auto;
+  padding: 25px;
+  background: white;
+  border: 1px solid #dddddd;
+  border-radius: 8px;
+}
+
+.formulario h2 {
+  margin-top: 0;
+  color: #0b4f8a;
+}
+
+form {
+  display: grid;
+  gap: 14px;
+}
+
+.campo {
+  display: grid;
+  gap: 6px;
+}
+
+label {
+  font-weight: bold;
+}
+
+input,
+select,
+textarea {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #cccccc;
+  border-radius: 6px;
+}
+
+small {
+  color: #c62828;
+}
+
+.acciones {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+button {
+  padding: 12px 18px;
+  border: 0;
+  border-radius: 6px;
+  background: #0b4f8a;
+  color: white;
+  cursor: pointer;
+}
+
+.exito {
+  padding: 12px;
+  border-radius: 6px;
+  background: #e8f5e9;
+  color: #2e7d32;
+  font-weight: bold;
+}
+
+.error {
+  padding: 12px;
+  border-radius: 6px;
+  background: #ffebee;
+  color: #c62828;
+}
+</file>
+
+<file path="soporte-angular/src/app/components/formulario-ticket/formulario-ticket.html">
+<section class="formulario">
+
+  <h2>{{ idTicket ? 'Editar ticket #' + idTicket : 'Registrar nuevo ticket' }}</h2>
+
+  <form [formGroup]="formulario" (ngSubmit)="guardar()">
+
+    <div class="campo">
+      <label for="asunto">Asunto</label>
+      <input id="asunto" type="text" formControlName="asunto">
+      @if (formulario.controls.asunto.invalid && formulario.controls.asunto.touched) {
+        <small>Ingrese un asunto de al menos 5 caracteres.</small>
+      }
+    </div>
+
+    <div class="campo">
+      <label for="solicitante">Solicitante</label>
+      <input id="solicitante" type="text" formControlName="solicitante">
+      @if (formulario.controls.solicitante.invalid && formulario.controls.solicitante.touched) {
+        <small>Ingrese el nombre del solicitante (mínimo 3 caracteres).</small>
+      }
+    </div>
+
+    <div class="campo">
+      <label for="descripcion">Descripción del problema</label>
+      <textarea id="descripcion" rows="4" formControlName="descripcion"></textarea>
+      @if (formulario.controls.descripcion.invalid && formulario.controls.descripcion.touched) {
+        <small>Describa el problema (mínimo 10 caracteres).</small>
+      }
+    </div>
+
+    <div class="campo">
+      <label for="categoria">Categoría</label>
+      <select id="categoria" formControlName="categoria">
+        <option value="">Seleccione una categoría</option>
+        <option value="Hardware">Hardware</option>
+        <option value="Software">Software</option>
+        <option value="Redes">Redes</option>
+        <option value="Cuentas y accesos">Cuentas y accesos</option>
+      </select>
+      @if (formulario.controls.categoria.invalid && formulario.controls.categoria.touched) {
+        <small>Seleccione una categoría.</small>
+      }
+    </div>
+
+    <div class="campo">
+      <label for="prioridad">Prioridad</label>
+      <select id="prioridad" formControlName="prioridad">
+        <option value="Baja">Baja</option>
+        <option value="Media">Media</option>
+        <option value="Alta">Alta</option>
+      </select>
+    </div>
+
+    <div class="campo">
+      <label for="estado">Estado</label>
+      <select id="estado" formControlName="estado">
+        <option value="Pendiente">Pendiente</option>
+        <option value="En Proceso">En Proceso</option>
+        <option value="Resuelto">Resuelto</option>
+      </select>
+    </div>
+
+    <div class="acciones">
+      <button type="submit">
+        {{ idTicket ? 'Guardar cambios' : 'Registrar ticket' }}
+      </button>
+      <a routerLink="/tickets">Volver al listado</a>
+    </div>
+
+  </form>
+
+  @if (mensaje) {
+    <p class="exito">{{ mensaje }}</p>
+  }
+
+  @if (error) {
+    <p class="error">{{ error }}</p>
+  }
+
+</section>
+</file>
+
+<file path="soporte-angular/src/app/components/formulario-ticket/formulario-ticket.ts">
+import {
+  Component,
+  OnInit
+} from '@angular/core';
+import {
+  ReactiveFormsModule,
+  FormControl,
+  FormGroup,
+  Validators
+} from '@angular/forms';
+import {
+  ActivatedRoute,
+  RouterLink
+} from '@angular/router';
+
+import { TicketsService } from '../../services/tickets';
+
+@Component({
+  selector: 'app-formulario-ticket',
+  imports: [ReactiveFormsModule, RouterLink],
+  templateUrl: './formulario-ticket.html',
+  styleUrl: './formulario-ticket.css'
+})
+export class FormularioTicket implements OnInit {
+
+  idTicket = 0;
+  mensaje = '';
+  error = '';
+
+  formulario = new FormGroup({
+
+    asunto: new FormControl('', {
+      nonNullable: true,
+      validators: [Validators.required, Validators.minLength(5)]
+    }),
+
+    solicitante: new FormControl('', {
+      nonNullable: true,
+      validators: [Validators.required, Validators.minLength(3)]
+    }),
+
+    descripcion: new FormControl('', {
+      nonNullable: true,
+      validators: [Validators.required, Validators.minLength(10)]
+    }),
+
+    categoria: new FormControl('', {
+      nonNullable: true,
+      validators: [Validators.required]
+    }),
+
+    prioridad: new FormControl('Media', {
+      nonNullable: true,
+      validators: [Validators.required]
+    }),
+
+    estado: new FormControl('Pendiente', {
+      nonNullable: true,
+      validators: [Validators.required]
+    })
+
+  });
+
+  constructor(
+    private ticketsService: TicketsService,
+    private route: ActivatedRoute
+  ) {}
+
+  ngOnInit(): void {
+
+    this.idTicket = Number(
+      this.route.snapshot.paramMap.get('id')
+    );
+
+    if (this.idTicket) {
+      this.cargarTicket();
+    }
+  }
+
+  cargarTicket(): void {
+
+    this.ticketsService
+      .obtenerTicket(this.idTicket)
+      .subscribe({
+
+        next: (ticket) => {
+          this.formulario.patchValue(ticket);
+        },
+
+        error: (error) => {
+          console.error(error);
+          this.error = 'No fue posible cargar el ticket.';
+        }
+
+      });
+  }
+
+  guardar(): void {
+
+    this.mensaje = '';
+    this.error = '';
+
+    if (this.formulario.invalid) {
+      this.formulario.markAllAsTouched();
+      return;
+    }
+
+    const ticket = this.formulario.getRawValue();
+
+    if (this.idTicket) {
+
+      this.ticketsService
+        .actualizarTicket(this.idTicket, ticket)
+        .subscribe({
+
+          next: () => {
+            this.mensaje = 'Ticket actualizado correctamente.';
+          },
+
+          error: (error) => {
+            console.error(error);
+            this.error = 'No fue posible actualizar el ticket.';
+          }
+
+        });
+
+    } else {
+
+      this.ticketsService
+        .crearTicket(ticket)
+        .subscribe({
+
+          next: (respuesta) => {
+
+            this.mensaje =
+              `Ticket #${respuesta.id} registrado correctamente.`;
+
+            this.formulario.reset({
+              asunto: '',
+              solicitante: '',
+              descripcion: '',
+              categoria: '',
+              prioridad: 'Media',
+              estado: 'Pendiente'
+            });
+          },
+
+          error: (error) => {
+            console.error(error);
+            this.error = 'No fue posible registrar el ticket.';
+          }
+
+        });
+    }
+  }
+}
+</file>
+
+<file path="soporte-angular/src/app/components/menu/menu.css">
+.menu {
+  display: flex;
+  justify-content: center;
+  gap: 25px;
+  padding: 15px;
+  background: white;
+  border-bottom: 1px solid #dddddd;
+}
+
+.menu a {
+  text-decoration: none;
+  color: #263238;
+  font-weight: bold;
+}
+
+.menu a.activo {
+  color: #0b4f8a;
+}
+</file>
+
+<file path="soporte-angular/src/app/components/menu/menu.html">
+<nav class="menu">
+  <a routerLink="/tickets" routerLinkActive="activo">
+    Tickets
+  </a>
+
+  <a routerLink="/nuevo-ticket" routerLinkActive="activo">
+    Nuevo Ticket
+  </a>
+</nav>
+</file>
+
+<file path="soporte-angular/src/app/components/menu/menu.ts">
+import { Component } from '@angular/core';
+import {
+  RouterLink,
+  RouterLinkActive
+} from '@angular/router';
+
+@Component({
+  selector: 'app-menu',
+  imports: [
+    RouterLink,
+    RouterLinkActive
+  ],
+  templateUrl: './menu.html',
+  styleUrl: './menu.css'
+})
+export class Menu {}
+</file>
+
+<file path="soporte-angular/src/app/components/tickets/tickets.css">
+.contenedor {
+  max-width: 1100px;
+  margin: 0 auto;
+}
+
+.encabezado {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 20px;
+}
+
+.encabezado h2 {
+  margin: 0;
+  color: #0b4f8a;
+}
+
+.tickets {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 20px;
+}
+
+.ticket {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 18px;
+  background: white;
+  border: 1px solid #dddddd;
+  border-radius: 8px;
+}
+
+.ticket h3 {
+  margin: 4px 0;
+  color: #0b4f8a;
+}
+
+.ticket p {
+  margin: 0;
+}
+
+.descripcion {
+  color: #555555;
+}
+
+.fecha {
+  font-size: 0.85rem;
+  color: #777777;
+}
+
+.etiquetas {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.etiqueta {
+  padding: 4px 10px;
+  border-radius: 20px;
+  font-size: 0.8rem;
+  font-weight: bold;
+}
+
+.prioridad-baja { background: #e8f5e9; color: #2e7d32; }
+.prioridad-media { background: #fff8e1; color: #a15c00; }
+.prioridad-alta { background: #ffebee; color: #c62828; }
+
+.pendiente { background: #eceff1; color: #455a64; }
+.en-proceso { background: #e3f2fd; color: #1565c0; }
+.resuelto { background: #e8f5e9; color: #2e7d32; }
+
+.acciones {
+  display: flex;
+  gap: 8px;
+  margin-top: auto;
+  padding-top: 8px;
+}
+
+.boton,
+button {
+  padding: 9px 14px;
+  border: 0;
+  border-radius: 6px;
+  background: #0b4f8a;
+  color: white;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.eliminar {
+  background: #c62828;
+}
+
+.estado-carga {
+  text-align: center;
+  color: #555555;
+}
+
+.error {
+  max-width: 600px;
+  margin: 20px auto;
+  padding: 16px;
+  border: 1px solid #c62828;
+  border-radius: 8px;
+  background: #ffebee;
+  color: #c62828;
+  text-align: center;
+}
+</file>
+
+<file path="soporte-angular/src/app/components/tickets/tickets.html">
+<section class="contenedor">
+
+  <div class="encabezado">
+    <h2>Tickets de soporte</h2>
+    <a class="boton" routerLink="/nuevo-ticket">Nuevo ticket</a>
+  </div>
+
+  @if (cargando) {
+    <p class="estado-carga">Cargando tickets...</p>
+  }
+
+  @if (error) {
+    <div class="error">
+      <p>{{ error }}</p>
+      <button type="button" (click)="cargarTickets()">
+        Reintentar
+      </button>
+    </div>
+  }
+
+  @if (!cargando && !error) {
+    <div class="tickets">
+
+      @for (ticket of tickets; track ticket.id) {
+        <article class="ticket">
+
+          <div class="etiquetas">
+            <span class="etiqueta"
+              [class.prioridad-baja]="ticket.prioridad === 'Baja'"
+              [class.prioridad-media]="ticket.prioridad === 'Media'"
+              [class.prioridad-alta]="ticket.prioridad === 'Alta'">
+              Prioridad {{ ticket.prioridad }}
+            </span>
+
+            <span class="etiqueta"
+              [class.pendiente]="ticket.estado === 'Pendiente'"
+              [class.en-proceso]="ticket.estado === 'En Proceso'"
+              [class.resuelto]="ticket.estado === 'Resuelto'">
+              {{ ticket.estado }}
+            </span>
+          </div>
+
+          <h3>#{{ ticket.id }} · {{ ticket.asunto }}</h3>
+
+          <p><strong>Solicitante:</strong> {{ ticket.solicitante }}</p>
+          <p><strong>Categoría:</strong> {{ ticket.categoria }}</p>
+          <p class="descripcion">{{ ticket.descripcion }}</p>
+          <p class="fecha">
+            Registrado: {{ ticket.fechaRegistro | date: 'dd/MM/yyyy HH:mm' }}
+          </p>
+
+          <div class="acciones">
+            <a class="boton" [routerLink]="['/editar-ticket', ticket.id]">
+              Editar
+            </a>
+            <button type="button" class="eliminar" (click)="eliminarTicket(ticket)">
+              Eliminar
+            </button>
+          </div>
+
+        </article>
+      } @empty {
+        <p>No existen tickets registrados.</p>
+      }
+
+    </div>
+  }
+
+</section>
+</file>
+
+<file path="soporte-angular/src/app/components/tickets/tickets.ts">
+import {
+  Component,
+  OnInit
+} from '@angular/core';
+import { DatePipe } from '@angular/common';
+import { RouterLink } from '@angular/router';
+
+import { Ticket } from '../../models/ticket';
+import { TicketsService } from '../../services/tickets';
+
+@Component({
+  selector: 'app-tickets',
+  imports: [RouterLink, DatePipe],
+  templateUrl: './tickets.html',
+  styleUrl: './tickets.css'
+})
+export class Tickets implements OnInit {
+
+  tickets: Ticket[] = [];
+  cargando = true;
+  error = '';
+
+  constructor(
+    private ticketsService: TicketsService
+  ) {}
+
+  ngOnInit(): void {
+    this.cargarTickets();
+  }
+
+  cargarTickets(): void {
+
+    this.cargando = true;
+    this.error = '';
+
+    this.ticketsService
+      .obtenerTickets()
+      .subscribe({
+
+        next: (datos) => {
+          this.tickets = datos;
+          this.cargando = false;
+        },
+
+        error: (error) => {
+          console.error(error);
+          this.error = 'No fue posible cargar los tickets. Verifique que la API esté funcionando.';
+          this.cargando = false;
+        }
+
+      });
+  }
+
+  eliminarTicket(ticket: Ticket): void {
+
+    const confirmado = confirm(
+      `¿Desea eliminar el ticket #${ticket.id} "${ticket.asunto}"?`
+    );
+
+    if (!confirmado) {
+      return;
+    }
+
+    this.ticketsService
+      .eliminarTicket(ticket.id)
+      .subscribe({
+
+        next: () => {
+          this.cargarTickets();
+        },
+
+        error: (error) => {
+          console.error(error);
+          alert('No fue posible eliminar el ticket.');
+        }
+
+      });
+  }
+}
+</file>
+
+<file path="soporte-angular/src/app/models/ticket.ts">
+export interface Ticket {
+  id: number;
+  asunto: string;
+  solicitante: string;
+  descripcion: string;
+  categoria: string;
+  prioridad: string;
+  estado: string;
+  fechaRegistro: string;
+}
+
+export type TicketNuevo =
+  Omit<Ticket, 'id' | 'fechaRegistro'>;
+</file>
+
+<file path="soporte-angular/src/app/app.css">
+.contenido-principal {
+  padding: 28px 18px 40px;
+}
+</file>
+
+<file path="soporte-angular/src/app/app.html">
+<app-cabecera></app-cabecera>
+
+<app-menu></app-menu>
+
+<main class="contenido-principal">
+  <router-outlet></router-outlet>
+</main>
+</file>
+
+<file path="soporte-angular/src/app/app.routes.ts">
+import { Routes } from '@angular/router';
+import { Tickets } from './components/tickets/tickets';
+import { FormularioTicket } from './components/formulario-ticket/formulario-ticket';
+
+export const routes: Routes = [
+  { path: '', redirectTo: 'tickets', pathMatch: 'full' },
+  { path: 'tickets', component: Tickets },
+  { path: 'nuevo-ticket', component: FormularioTicket },
+  { path: 'editar-ticket/:id', component: FormularioTicket },
+  { path: '**', redirectTo: 'tickets' }
+];
+</file>
+
+<file path="soporte-angular/src/app/app.ts">
+import { Component } from '@angular/core';
+import { RouterOutlet } from '@angular/router';
+import { Cabecera } from './components/cabecera/cabecera';
+import { Menu } from './components/menu/menu';
+
+@Component({
+  selector: 'app-root',
+  imports: [
+    RouterOutlet,
+    Cabecera,
+    Menu
+  ],
+  templateUrl: './app.html',
+  styleUrl: './app.css'
+})
+export class App {}
+</file>
+
+<file path="soporte-angular/src/styles.css">
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: Arial, Helvetica, sans-serif;
+  background: #f5f7f9;
+  color: #263238;
+}
+
+button,
+input,
+select,
+textarea {
+  font: inherit;
+}
+</file>
+
+<file path=".gitignore">
+node_modules/
+dist/
+.angular/
+.env
+</file>
+
+</files>

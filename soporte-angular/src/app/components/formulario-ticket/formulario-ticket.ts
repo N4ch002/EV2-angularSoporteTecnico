@@ -1,11 +1,20 @@
-import { Component } from '@angular/core';
+import {
+  Component,
+  OnInit,
+  ChangeDetectorRef
+} from '@angular/core';
 import {
   ReactiveFormsModule,
   FormControl,
   FormGroup,
   Validators
 } from '@angular/forms';
-import { RouterLink } from '@angular/router';
+import {
+  ActivatedRoute,
+  RouterLink
+} from '@angular/router';
+
+import { TicketsService } from '../../services/tickets';
 
 @Component({
   selector: 'app-formulario-ticket',
@@ -13,7 +22,7 @@ import { RouterLink } from '@angular/router';
   templateUrl: './formulario-ticket.html',
   styleUrl: './formulario-ticket.css'
 })
-export class FormularioTicket {
+export class FormularioTicket implements OnInit {
 
   idTicket = 0;
   mensaje = '';
@@ -53,6 +62,43 @@ export class FormularioTicket {
 
   });
 
+  constructor(
+    private ticketsService: TicketsService,
+    private route: ActivatedRoute,
+    private cdr: ChangeDetectorRef
+  ) {}
+
+  ngOnInit(): void {
+
+    this.idTicket = Number(
+      this.route.snapshot.paramMap.get('id')
+    );
+
+    if (this.idTicket) {
+      this.cargarTicket();
+    }
+  }
+
+  cargarTicket(): void {
+
+    this.ticketsService
+      .obtenerTicket(this.idTicket)
+      .subscribe({
+
+        next: (ticket) => {
+          this.formulario.patchValue(ticket);
+          this.cdr.detectChanges();
+        },
+
+        error: (error) => {
+          console.error(error);
+          this.error = 'No fue posible cargar el ticket.';
+          this.cdr.detectChanges();
+        }
+
+      });
+  }
+
   guardar(): void {
 
     this.mensaje = '';
@@ -63,6 +109,57 @@ export class FormularioTicket {
       return;
     }
 
-    console.log('Ticket:', this.formulario.getRawValue());
+    const ticket = this.formulario.getRawValue();
+
+    if (this.idTicket) {
+
+      this.ticketsService
+        .actualizarTicket(this.idTicket, ticket)
+        .subscribe({
+
+          next: () => {
+            this.mensaje = 'Ticket actualizado correctamente.';
+            this.cdr.detectChanges();
+          },
+
+          error: (error) => {
+            console.error(error);
+            this.error = 'No fue posible actualizar el ticket.';
+            this.cdr.detectChanges();
+          }
+
+        });
+
+    } else {
+
+      this.ticketsService
+        .crearTicket(ticket)
+        .subscribe({
+
+          next: (respuesta) => {
+
+            this.mensaje =
+              `Ticket #${respuesta.id} registrado correctamente.`;
+
+            this.formulario.reset({
+              asunto: '',
+              solicitante: '',
+              descripcion: '',
+              categoria: '',
+              prioridad: 'Media',
+              estado: 'Pendiente'
+            });
+
+            this.cdr.detectChanges();
+          },
+
+          error: (error) => {
+            console.error(error);
+            this.error = 'No fue posible registrar el ticket.';
+            this.cdr.detectChanges();
+          }
+
+        });
+    }
   }
 }
