@@ -1,9 +1,12 @@
 import { Component } from '@angular/core';
 
 @Component({
-  imports: [],
   selector: 'app-cabecera',
-  styleUrl: './cabecera.css',
+  imports: [],
   templateUrl: './cabecera.html',
+  styleUrl: './cabecera.css'
 })
-export class Cabecera {}
+export class Cabecera {
+  titulo = 'Soporte Técnico';
+  subtitulo = 'Registro y seguimiento de tickets de soporte';
+}

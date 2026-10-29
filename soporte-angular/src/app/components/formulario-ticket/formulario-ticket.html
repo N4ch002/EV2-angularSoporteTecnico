@@ -1,1 +1,80 @@
-<p>formulario-ticket works!</p>
+<section class="formulario">
+
+  <h2>{{ idTicket ? 'Editar ticket #' + idTicket : 'Registrar nuevo ticket' }}</h2>
+
+  <form [formGroup]="formulario" (ngSubmit)="guardar()">
+
+    <div class="campo">
+      <label for="asunto">Asunto</label>
+      <input id="asunto" type="text" formControlName="asunto">
+      @if (formulario.controls.asunto.invalid && formulario.controls.asunto.touched) {
+        <small>Ingrese un asunto de al menos 5 caracteres.</small>
+      }
+    </div>
+
+    <div class="campo">
+      <label for="solicitante">Solicitante</label>
+      <input id="solicitante" type="text" formControlName="solicitante">
+      @if (formulario.controls.solicitante.invalid && formulario.controls.solicitante.touched) {
+        <small>Ingrese el nombre del solicitante (mínimo 3 caracteres).</small>
+      }
+    </div>
+
+    <div class="campo">
+      <label for="descripcion">Descripción del problema</label>
+      <textarea id="descripcion" rows="4" formControlName="descripcion"></textarea>
+      @if (formulario.controls.descripcion.invalid && formulario.controls.descripcion.touched) {
+        <small>Describa el problema (mínimo 10 caracteres).</small>
+      }
+    </div>
+
+    <div class="campo">
+      <label for="categoria">Categoría</label>
+      <select id="categoria" formControlName="categoria">
+        <option value="">Seleccione una categoría</option>
+        <option value="Hardware">Hardware</option>
+        <option value="Software">Software</option>
+        <option value="Redes">Redes</option>
+        <option value="Cuentas y accesos">Cuentas y accesos</option>
+      </select>
+      @if (formulario.controls.categoria.invalid && formulario.controls.categoria.touched) {
+        <small>Seleccione una categoría.</small>
+      }
+    </div>
+
+    <div class="campo">
+      <label for="prioridad">Prioridad</label>
+      <select id="prioridad" formControlName="prioridad">
+        <option value="Baja">Baja</option>
+        <option value="Media">Media</option>
+        <option value="Alta">Alta</option>
+      </select>
+    </div>
+
+    <div class="campo">
+      <label for="estado">Estado</label>
+      <select id="estado" formControlName="estado">
+        <option value="Pendiente">Pendiente</option>
+        <option value="En Proceso">En Proceso</option>
+        <option value="Resuelto">Resuelto</option>
+      </select>
+    </div>
+
+    <div class="acciones">
+      <button type="submit">
+        {{ idTicket ? 'Guardar cambios' : 'Registrar ticket' }}
+      </button>
+      <a routerLink="/tickets">Volver al listado</a>
+    </div>
+
+  </form>
+
+  @if (mensaje) {
+    <p class="exito">{{ mensaje }}</p>
+  }
+
+  @if (error) {
+    <p class="error">{{ error }}</p>
+  }
+
+</section>

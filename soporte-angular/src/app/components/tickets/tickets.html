@@ -1,1 +1,69 @@
-<p>tickets works!</p>
+<section class="contenedor">
+
+  <div class="encabezado">
+    <h2>Tickets de soporte</h2>
+    <a class="boton" routerLink="/nuevo-ticket">Nuevo ticket</a>
+  </div>
+
+  @if (cargando) {
+    <p class="estado-carga">Cargando tickets...</p>
+  }
+
+  @if (error) {
+    <div class="error">
+      <p>{{ error }}</p>
+      <button type="button" (click)="cargarTickets()">
+        Reintentar
+      </button>
+    </div>
+  }
+
+  @if (!cargando && !error) {
+    <div class="tickets">
+
+      @for (ticket of tickets; track ticket.id) {
+        <article class="ticket">
+
+          <div class="etiquetas">
+            <span class="etiqueta"
+              [class.prioridad-baja]="ticket.prioridad === 'Baja'"
+              [class.prioridad-media]="ticket.prioridad === 'Media'"
+              [class.prioridad-alta]="ticket.prioridad === 'Alta'">
+              Prioridad {{ ticket.prioridad }}
+            </span>
+
+            <span class="etiqueta"
+              [class.pendiente]="ticket.estado === 'Pendiente'"
+              [class.en-proceso]="ticket.estado === 'En Proceso'"
+              [class.resuelto]="ticket.estado === 'Resuelto'">
+              {{ ticket.estado }}
+            </span>
+          </div>
+
+          <h3>#{{ ticket.id }} · {{ ticket.asunto }}</h3>
+
+          <p><strong>Solicitante:</strong> {{ ticket.solicitante }}</p>
+          <p><strong>Categoría:</strong> {{ ticket.categoria }}</p>
+          <p class="descripcion">{{ ticket.descripcion }}</p>
+          <p class="fecha">
+            Registrado: {{ ticket.fechaRegistro | date: 'dd/MM/yyyy HH:mm' }}
+          </p>
+
+          <div class="acciones">
+            <a class="boton" [routerLink]="['/editar-ticket', ticket.id]">
+              Editar
+            </a>
+            <button type="button" class="eliminar" (click)="eliminarTicket(ticket)">
+              Eliminar
+            </button>
+          </div>
+
+        </article>
+      } @empty {
+        <p>No existen tickets registrados.</p>
+      }
+
+    </div>
+  }
+
+</section>
